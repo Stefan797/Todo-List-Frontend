@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
+
 
 @Component({
   selector: 'app-login',
@@ -6,15 +9,27 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-  
-  email:string = '';
-  password:string = '';
+
+  username: string = '';
+  password: string = '';
 
   ngOnInit(): void {
-    
+
   }
 
-  login(){
-    // Logik, um mit backend zu kommunizieren
+  constructor(private as:AuthService, private router: Router) { }
+
+  async login() {
+    try {
+      let resp: any = await this.as.loginWithUsernameAndPassword(this.username, this.password);
+      console.log(resp);
+      localStorage.setItem('token', resp['token']);
+      this.router.navigateByUrl('/todos');
+    } catch (e) {
+      alert('Login failed');
+      console.error(e);
+    }
   }
 }
+
+
